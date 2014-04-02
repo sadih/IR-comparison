@@ -3,7 +3,7 @@
  * Created on 2012-01-04
  * Jouni Tuominen <jouni.tuominen@aalto.fi>
  */
-package ir_course;
+package fi.aalto.ir;
 
 public class DocumentInCollection {
 
