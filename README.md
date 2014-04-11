@@ -1,6 +1,11 @@
 IR-comparison
 =============
 
+#Run
+
+Add ```corpus_part2.xml``` to run-time arguments.
+
+
 #IR Comparison and Report
 
 ##Group assignment - Deadline 14.04.2014

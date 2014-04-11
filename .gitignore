@@ -5,3 +5,5 @@
 .project
 .settings/
 .DS_Store
+indicies/
+bin/
