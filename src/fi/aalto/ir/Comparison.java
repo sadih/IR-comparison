@@ -102,7 +102,7 @@ public class Comparison {
 			if (inAbstract != null) {
 				for (String term : inAbstract) {
 					Query query = new TermQuery(new Term("abstract", term));
-					booleanQuery.add(query, BooleanClause.Occur.MUST);
+					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
 			}
 			
@@ -113,7 +113,7 @@ public class Comparison {
 
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
-				results.add(searcher.doc(docs[i].doc).get("query"));
+				results.add(searcher.doc(docs[i].doc).get("query") + " " + searcher.doc(docs[i].doc).get("tasknumber"));
 			}
 
 			reader.close();
@@ -194,11 +194,19 @@ public class Comparison {
 			results = comparison.search(inTitle, null, null, vsm, "VSM");
 			comparison.printResults(results);
 			
+			
+			
+			
 			// 2) search document with word "tablet" in abstract and taskNumber 16 (BM25)
 			inTitle = new LinkedList<String>();
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
+			inTitle.add("tablet");
+			inTitle.add("ergonomics");
+			inTitle.add("typing");
 			inAbstract.add("tablet");
+			inAbstract.add("ergonomics");
+			inAbstract.add("typing");
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
