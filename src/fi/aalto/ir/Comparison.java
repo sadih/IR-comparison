@@ -214,21 +214,8 @@ public class Comparison {
 			List<String> inAbstract;
 			String taskNumber;
 			List<String> results;
-
-			// 1) search documents with word "tablets" in the title (BM25)
-			inTitle = new LinkedList<String>();
-			//inTitle.add(Comparison.stem("tablet"));
-			results = comparison.search(inTitle, null, null, bm25, "BM25");
-			//comparison.printResults(results);
 			
-			// 1) search documents with word "tablets" in the title (VSM)
-			results = comparison.search(inTitle, null, null, vsm, "VSM");
-			//comparison.printResults(results);
-			
-			
-			
-			
-			// 2) search document with word "tablet" in abstract and taskNumber 16 (BM25)
+			// 1) search document with word "tablet" in abstract and taskNumber 16 (BM25)
 			inTitle = new LinkedList<String>();
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
@@ -242,12 +229,6 @@ public class Comparison {
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
-			//inTitle.add(comparison.stem("tablet"));
-			//inTitle.add(comparison.stem("ergonomics"));
-			//inTitle.add(comparison.stem("typing"));
-			//inAbstract.add(Comparison.stem("tablet"));
-			//inAbstract.add(Comparison.stem("ergonomics"));
-			//inAbstract.add(Comparison.stem("typing"));
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
