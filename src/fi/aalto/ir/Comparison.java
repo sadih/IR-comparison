@@ -40,12 +40,13 @@ public class Comparison {
 
 	}
 
-	public void index(List<DocumentInCollection> docs) {
+	public void index(List<DocumentInCollection> docs, Similarity similarity) {
 		analyzer = new StandardAnalyzer(Version.LUCENE_42); // Uses default
 															// StopAnalyzer.ENGLISH_STOP_WORDS_SET
 
 		IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_42,
 				analyzer);
+		conf.setSimilarity(similarity);
 		conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		try {
 			IndexWriter writer = new IndexWriter(directory, conf);
@@ -168,8 +169,8 @@ public class Comparison {
 			}
 			
 			String[] first_query = "Ergonomics and modern devices".split(" ");
-			String[]  second_query = "ergonomics tablet typing".split(" ");
-			String[]  third_query = "tablet and ergo*".split(" ");
+			String[] second_query = "ergonomics tablet typing".split(" ");
+			String[] third_query = "tablet and ergo*".split(" ");
 			
 			List<String> stemmed_first_query = new ArrayList<String>();
 			List<String> stemmed_second_query = new ArrayList<String>();
@@ -185,7 +186,8 @@ public class Comparison {
 				stemmed_third_query.add(stem(word));
 			}
 
-			Comparison comparison = new Comparison();
+			Comparison comparisonVSM = new Comparison();
+			Comparison comparisonBM25 = new Comparison();
 			DefaultSimilarity vsm = new DefaultSimilarity();
 			BM25Similarity bm25 = new BM25Similarity();
 
@@ -193,7 +195,9 @@ public class Comparison {
 			parser.parse(args[0]);
 			List<DocumentInCollection> docs = parser.getDocuments();
 
-			comparison.index(docs);
+			comparisonVSM.index(docs, vsm);
+			comparisonBM25.index(docs, bm25);
+			
 
 			List<String> inAbstract;
 			List<String> results;
@@ -205,11 +209,11 @@ public class Comparison {
 			for (String word : stemmed_first_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inAbstract, bm25, "BM25");
-			comparison.printResults(results);
+			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+			comparisonBM25.printResults(results);
 			
-			results = comparison.search(inAbstract, vsm, "VSM");
-			comparison.printResults(results);
+			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			comparisonVSM.printResults(results);
 			
 			
 			// Second query
@@ -217,11 +221,11 @@ public class Comparison {
 			for (String word : stemmed_second_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inAbstract, bm25, "BM25");
-			comparison.printResults(results);
+			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+			comparisonBM25.printResults(results);
 			
-			results = comparison.search(inAbstract, vsm, "VSM");
-			comparison.printResults(results);
+			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			comparisonVSM.printResults(results);
 			
 			
 			// Third query
@@ -229,11 +233,11 @@ public class Comparison {
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inAbstract, bm25, "BM25");
-			comparison.printResults(results);
+			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+			comparisonBM25.printResults(results);
 			
-			results = comparison.search(inAbstract, vsm, "VSM");
-			comparison.printResults(results);
+			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			comparisonVSM.printResults(results);
 
 			try {
 				directory.close();
