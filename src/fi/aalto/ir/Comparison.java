@@ -3,7 +3,6 @@ package fi.aalto.ir;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -89,7 +88,7 @@ public class Comparison {
 
 	}
 
-	public List<String> search(List<String> inAbstract, Similarity similarity, String type) {
+	public List<String> search(List<String> inAbstract, String relevance, Similarity similarity, String type) {
 
 		printQuery(inAbstract, type);
 
@@ -114,6 +113,11 @@ public class Comparison {
 					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
 			}
+			
+			if (relevance != null) {
+				Query q = new TermQuery(new Term("relevance", "1"));
+				booleanQuery.add(q, BooleanClause.Occur.SHOULD);
+			}
 
 			int total_results = 0;
 			int relevant_results = 0;
@@ -126,8 +130,9 @@ public class Comparison {
 				}
 				total_results += 1;
 			}
+			
 			System.out.println("Relevant results: " + relevant_results + ", total results: " + total_results);
-
+			
 			reader.close();
 
 		} catch (IOException e) {
@@ -194,7 +199,7 @@ public class Comparison {
 			Comparison comparisonVSM = new Comparison();
 			Comparison comparisonBM25 = new Comparison();
 			DefaultSimilarity vsm = new DefaultSimilarity();
-			BM25Similarity bm25 = new BM25Similarity(6.0f, 4.0f);
+			BM25Similarity bm25 = new BM25Similarity();
 
 			DocumentCollectionParser parser = new DocumentCollectionParser();
 			parser.parse(args[0]);
@@ -207,42 +212,45 @@ public class Comparison {
 			List<String> inAbstract;
 			List<String> results;
 			
-			// 1) search document with word "tablet" in abstract and taskNumber 16 (BM25)
-			inAbstract = new LinkedList<String>();			
-			
 			// First query
+			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_first_query) {
 				inAbstract.add(word);
 			}
-			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25");
 			//comparisonBM25.printResults(results);
 			
-			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM");
 			//comparisonVSM.printResults(results);
-			
 			
 			// Second query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_second_query) {
 				inAbstract.add(word);
 			}
-			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25");
 			//comparisonBM25.printResults(results);
 			
-			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM");
 			//comparisonVSM.printResults(results);
-			
 			
 			// Third query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
-			results = comparisonBM25.search(inAbstract, bm25, "BM25");
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25");
 			//comparisonBM25.printResults(results);
 			
-			results = comparisonVSM.search(inAbstract, vsm, "VSM");
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM");
 			//comparisonVSM.printResults(results);
+			
+			//Fetch ALL WITH RELEVANCE 1
+			results = comparisonBM25.search(null, "1", bm25, "BM25");
+			
+			results = comparisonVSM.search(null, "1", vsm, "VSM");
 
 			try {
 				directory.close();
