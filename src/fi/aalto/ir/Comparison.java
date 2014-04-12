@@ -23,6 +23,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -88,9 +89,9 @@ public class Comparison {
 
 	}
 
-	public List<String> search(List<String> inTitle, List<String> inAbstract, String taskNumber, Similarity similarity, String type) {
+	public List<String> search(List<String> inAbstract, Similarity similarity, String type) {
 
-		printQuery(inTitle, inAbstract, taskNumber, type);
+		printQuery(inAbstract, type);
 
 		List<String> results = new LinkedList<String>();
 
@@ -102,23 +103,16 @@ public class Comparison {
 
 			BooleanQuery booleanQuery = new BooleanQuery();
 			booleanQuery.setMinimumNumberShouldMatch(1);
-			if (inTitle != null) {
-				for (String term : inTitle) {
-					Query query = new TermQuery(new Term("title", term));
-					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
-				}
-			}
 			
 			if (inAbstract != null) {
 				for (String term : inAbstract) {
-					Query query = new TermQuery(new Term("abstract", term));
+					Term termm = new Term("abstract", term);
+					Query query = new TermQuery(termm);
+					if (term.contains("*")) {
+						query = new WildcardQuery(termm);
+					}
 					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
-			}
-			
-			if (taskNumber != null) {
-				Query query = new TermQuery(new Term("tasknumber", taskNumber));
-				booleanQuery.add(query, BooleanClause.Occur.MUST);
 			}
 
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
@@ -136,16 +130,10 @@ public class Comparison {
 		return results;
 	}
 
-	public void printQuery(List<String> inTitle, List<String> inAbstract, String taskNumber, String type) {
+	public void printQuery(List<String> inAbstract, String type) {
 		System.out.print("Search (");
-		if (inTitle != null) {
-			System.out.print("in title: " + inTitle);
-		}
 		if (inAbstract != null) {
-			System.out.print(", in abstract: " + inAbstract);
-		}
-		if (taskNumber != null) {
-			System.out.print(", taskNumber: " + taskNumber);
+			System.out.print("in abstract: " + inAbstract);
 		}
 		if (type != null) {
 			System.out.print(", " + type);
@@ -207,49 +195,45 @@ public class Comparison {
 
 			comparison.index(docs);
 
-			List<String> inTitle;
 			List<String> inAbstract;
 			String taskNumber;
 			List<String> results;
 			
 			// 1) search document with word "tablet" in abstract and taskNumber 16 (BM25)
-			inTitle = new LinkedList<String>();
-			inAbstract = new LinkedList<String>();
-			taskNumber = "16";
+			inAbstract = new LinkedList<String>();			
 			
-			
+			// First query
 			for (String word : stemmed_first_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			results = comparison.search(inAbstract, bm25, "BM25");
 			comparison.printResults(results);
 			
-			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
-			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
+			results = comparison.search(inAbstract, vsm, "VSM");
 			comparison.printResults(results);
 			
 			
+			// Second query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_second_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			results = comparison.search(inAbstract, bm25, "BM25");
 			comparison.printResults(results);
 			
-			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
-			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
+			results = comparison.search(inAbstract, vsm, "VSM");
 			comparison.printResults(results);
 			
 			
+			// Third query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
-			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			results = comparison.search(inAbstract, bm25, "BM25");
 			comparison.printResults(results);
 			
-			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
-			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
+			results = comparison.search(inAbstract, vsm, "VSM");
 			comparison.printResults(results);
 
 			try {
