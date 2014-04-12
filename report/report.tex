@@ -1,0 +1,63 @@
+%% Select the report mode on (the default mode)
+% See the documentation for more information about the available class options
+% If you give option 'draft' or 'draft*', the draft mode is set on
+\documentclass{aaltoseries}
+\usepackage[utf8]{inputenc}
+
+% Uncomment and give the correct language option if you are not writing in English
+%\usepackage[<language>]{babel}
+
+% The authors of the report
+\author{Sadi Hossain, Patrik Vilja and Peter Vilja}
+% The title of the report
+\title{The Title of the Report}
+
+
+
+\begin{document}
+
+%% The abstract of the report
+% Use this command!
+%\draftabstract{\lipsum[1-3]}
+% If you want to include another abstract for the draft in another language,
+% uncomment and give the language name as the optional argument
+%\draftabstract[<language>]{\lipsum[4-6]}
+
+
+
+%% Table of contents of the whole report
+\tableofcontents
+
+%% The main matter, one can obviously use \input or \include
+\chapter{Introduction}
+What is the point and why we're doing shit.
+
+%% An example of setting the chapter author
+%\chapterauthor{John Doe}
+
+\chapter{Compared Techniques}
+\section{VSM}
+Asiaa VSM:stä.
+\section{BM25}
+Asiaa BM25:sta.
+\section{Stemmers}
+Mikä on stemmeri ja mihin sitä käytetään.
+
+%% An example for playing with the headers:
+% the optional argument goes to the table of contents, the argument to the running header
+\chapter{Evaluation}
+%\section{Section Heading}
+Jaaa sitten on hirvee määrä tekstiä evaluoinnista.
+
+
+%% Another example of setting the chapter author
+%\chapterauthor{John Smith}
+
+\chapter{Conclusions}
+Mitä opittiin? kaikkee jännää.
+
+\chapter{References}
+
+\chapter{Contributions}
+
+\end{document}

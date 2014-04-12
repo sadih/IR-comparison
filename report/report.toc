@@ -1,0 +1,10 @@
+\contentsline {chapter}{Contents}{1}
+\contentsline {chapter}{\numberline {1.}Introduction}{3}
+\contentsline {chapter}{\numberline {2.}Compared Techniques}{5}
+\contentsline {section}{\numberline {2.1}VSM}{5}
+\contentsline {section}{\numberline {2.2}BM25}{5}
+\contentsline {section}{\numberline {2.3}Stemmers}{5}
+\contentsline {chapter}{\numberline {3.}Evaluation}{7}
+\contentsline {chapter}{\numberline {4.}Conclusions}{9}
+\contentsline {chapter}{\numberline {5.}References}{11}
+\contentsline {chapter}{\numberline {6.}Contributions}{13}
