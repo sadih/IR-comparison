@@ -103,7 +103,7 @@ public class Comparison {
 			if (inAbstract != null) {
 				for (String term : inAbstract) {
 					Query query = new TermQuery(new Term("abstract", term));
-					booleanQuery.add(query, BooleanClause.Occur.MUST);
+					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
 			}
 			
@@ -205,9 +205,9 @@ public class Comparison {
 			inTitle.add(comparison.stem("tablet"));
 			inTitle.add(comparison.stem("ergonomics"));
 			inTitle.add(comparison.stem("typing"));
-//			inAbstract.add(comparison.stem("tablet"));
-//			inAbstract.add(comparison.stem("ergonomics"));
-//			inAbstract.add(comparison.stem("typing"));
+			inAbstract.add(comparison.stem("tablet"));
+			inAbstract.add(comparison.stem("ergonomics"));
+			inAbstract.add(comparison.stem("typing"));
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
