@@ -10,7 +10,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -55,20 +54,29 @@ public class Comparison {
 				 * int searchTaskNumber; private String query; private boolean
 				 * relevant;
 				 */
-
-				Document document = new Document();
-				document.add(new Field("title", doc.getTitle(),
-						TextField.TYPE_STORED));
-				document.add(new Field("abstract", doc.getAbstractText(),
-						TextField.TYPE_STORED));
-				document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
-						TextField.TYPE_STORED));
-				document.add(new Field("query", doc.getQuery(),
-						TextField.TYPE_STORED));
-				document.add(new Field("relevance", doc.isRelevant() ? "1" : "0",
-						TextField.TYPE_STORED));
 				
-				writer.addDocument(document);
+				if (doc.getSearchTaskNumber() == 16) {
+					String[] abs = doc.getAbstractText().split(" ");
+					String stemmed = "";
+					
+					for (String word : abs) {
+						stemmed += stem(word) + " ";
+					}
+					
+					Document document = new Document();
+					document.add(new Field("title", doc.getTitle(),
+							TextField.TYPE_STORED));
+					document.add(new Field("abstract", stemmed,
+							TextField.TYPE_STORED));
+					document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
+							TextField.TYPE_STORED));
+					document.add(new Field("query", doc.getQuery(),
+							TextField.TYPE_STORED));
+					document.add(new Field("relevance", doc.isRelevant() ? "1" : "0",
+							TextField.TYPE_STORED));
+					
+					writer.addDocument(document);
+				}
 			}
 			writer.commit();
 			writer.close();
@@ -115,7 +123,7 @@ public class Comparison {
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
 				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
-						", Relevant: " + searcher.doc(docs[i].doc).get("relevance"));
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + " Title: " + searcher.doc(docs[i].doc).get("title"));
 			}
 
 			reader.close();
