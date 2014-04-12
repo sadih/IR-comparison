@@ -220,12 +220,31 @@ public class Comparison {
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
 			
+			
 			for (String word : stemmed_first_query) {
 				inAbstract.add(word);
 			}
+			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			comparison.printResults(results);
+			
+			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
+			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
+			comparison.printResults(results);
+			
+			
+			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_second_query) {
 				inAbstract.add(word);
 			}
+			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			comparison.printResults(results);
+			
+			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
+			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
+			comparison.printResults(results);
+			
+			
+			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
