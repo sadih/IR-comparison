@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -60,10 +61,13 @@ public class Comparison {
 						TextField.TYPE_STORED));
 				document.add(new Field("abstract", doc.getAbstractText(),
 						TextField.TYPE_STORED));
-				document.add(new Field("tasknumber", Integer.toString(doc.getSearchTaskNumber()),
-						TextField.TYPE_STORED));
+				document.add(new IntField("tasknumber", doc.getSearchTaskNumber(),
+						IntField.TYPE_STORED));
 				document.add(new Field("query", doc.getQuery(),
 						TextField.TYPE_STORED));
+				document.add(new IntField("relevance", doc.isRelevant() ? 1 : 0,
+						IntField.TYPE_STORED));
+				
 				writer.addDocument(document);
 			}
 			writer.commit();
