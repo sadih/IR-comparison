@@ -61,12 +61,12 @@ public class Comparison {
 						TextField.TYPE_STORED));
 				document.add(new Field("abstract", doc.getAbstractText(),
 						TextField.TYPE_STORED));
-				document.add(new IntField("tasknumber", doc.getSearchTaskNumber(),
-						IntField.TYPE_STORED));
+				document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
+						TextField.TYPE_STORED));
 				document.add(new Field("query", doc.getQuery(),
 						TextField.TYPE_STORED));
-				document.add(new IntField("relevance", doc.isRelevant() ? 1 : 0,
-						IntField.TYPE_STORED));
+				document.add(new Field("relevance", doc.isRelevant() ? "1" : "0",
+						TextField.TYPE_STORED));
 				
 				writer.addDocument(document);
 			}
@@ -79,9 +79,9 @@ public class Comparison {
 
 	}
 
-	public List<String> search(List<String> inTitle, Similarity similarity) {
+	public List<String> search(List<String> inTitle, List<String> inAbstract, String taskNumber, Similarity similarity, String type) {
 
-		printQuery(inTitle);
+		printQuery(inTitle, inAbstract, taskNumber, type);
 
 		List<String> results = new LinkedList<String>();
 
@@ -94,12 +94,21 @@ public class Comparison {
 			BooleanQuery booleanQuery = new BooleanQuery();
 			if (inTitle != null) {
 				for (String term : inTitle) {
-					//Query query = new TermQuery(new Term("title", term));
-					Query query = new TermQuery(new Term("query", term));
-					//Query query1 = new TermQuery(new Term("abstract", "tablet"));
+					Query query = new TermQuery(new Term("title", term));
 					booleanQuery.add(query, BooleanClause.Occur.MUST);
-					//booleanQuery.add(query1, BooleanClause.Occur.MUST);
 				}
+			}
+			
+			if (inAbstract != null) {
+				for (String term : inAbstract) {
+					Query query = new TermQuery(new Term("abstract", term));
+					booleanQuery.add(query, BooleanClause.Occur.MUST);
+				}
+			}
+			
+			if (taskNumber != null) {
+				Query query = new TermQuery(new Term("tasknumber", taskNumber));
+				booleanQuery.add(query, BooleanClause.Occur.MUST);
 			}
 
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
@@ -116,10 +125,19 @@ public class Comparison {
 		return results;
 	}
 
-	public void printQuery(List<String> inTitle) {
+	public void printQuery(List<String> inTitle, List<String> inAbstract, String taskNumber, String type) {
 		System.out.print("Search (");
 		if (inTitle != null) {
 			System.out.print("in title: " + inTitle);
+		}
+		if (inAbstract != null) {
+			System.out.print(", in abstract: " + inAbstract);
+		}
+		if (taskNumber != null) {
+			System.out.print(", taskNumber: " + taskNumber);
+		}
+		if (type != null) {
+			System.out.print(", " + type);
 		}
 		System.out.println("):");
 	}
@@ -161,17 +179,31 @@ public class Comparison {
 			comparison.index(docs);
 
 			List<String> inTitle;
+			List<String> inAbstract;
+			String taskNumber;
 			List<String> results;
 
 			// 1) search documents with word "tablets" in the title (BM25)
 			inTitle = new LinkedList<String>();
 			inTitle.add("tablet");
 			// inTitle.add("ergonomics");
-			results = comparison.search(inTitle, bm25);
+			results = comparison.search(inTitle, null, null, bm25, "BM25");
 			comparison.printResults(results);
 			
 			// 1) search documents with word "tablets" in the title (VSM)
-			results = comparison.search(inTitle, vsm);
+			results = comparison.search(inTitle, null, null, vsm, "VSM");
+			comparison.printResults(results);
+			
+			// 2) search document with word "tablet" in abstract and taskNumber 16 (BM25)
+			inTitle = new LinkedList<String>();
+			inAbstract = new LinkedList<String>();
+			taskNumber = "16";
+			inAbstract.add("tablet");
+			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
+			comparison.printResults(results);
+			
+			// 2) search document with word "tablet" in abstract and taskNumber 16 (VSM)
+			results = comparison.search(inTitle, inAbstract, taskNumber, vsm, "VSM");
 			comparison.printResults(results);
 
 			try {
