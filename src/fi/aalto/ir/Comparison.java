@@ -92,10 +92,11 @@ public class Comparison {
 			searcher.setSimilarity(similarity);
 
 			BooleanQuery booleanQuery = new BooleanQuery();
+			booleanQuery.setMinimumNumberShouldMatch(1);
 			if (inTitle != null) {
 				for (String term : inTitle) {
 					Query query = new TermQuery(new Term("title", term));
-					booleanQuery.add(query, BooleanClause.Occur.MUST);
+					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
 			}
 			
@@ -113,7 +114,8 @@ public class Comparison {
 
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
-				results.add(searcher.doc(docs[i].doc).get("query") + " " + searcher.doc(docs[i].doc).get("tasknumber"));
+				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance"));
 			}
 
 			reader.close();
@@ -200,9 +202,12 @@ public class Comparison {
 			inTitle = new LinkedList<String>();
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
-			inAbstract.add(comparison.stem("tablet"));
-			inAbstract.add(comparison.stem("ergonomics"));
-			inAbstract.add(comparison.stem("typing"));
+			inTitle.add(comparison.stem("tablet"));
+			inTitle.add(comparison.stem("ergonomics"));
+			inTitle.add(comparison.stem("typing"));
+//			inAbstract.add(comparison.stem("tablet"));
+//			inAbstract.add(comparison.stem("ergonomics"));
+//			inAbstract.add(comparison.stem("typing"));
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
