@@ -102,7 +102,7 @@ public class Comparison {
 			if (inAbstract != null) {
 				for (String term : inAbstract) {
 					Query query = new TermQuery(new Term("abstract", term));
-					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
+					booleanQuery.add(query, BooleanClause.Occur.MUST);
 				}
 			}
 			
@@ -150,6 +150,13 @@ public class Comparison {
 		} else
 			System.out.println(" no results");
 	}
+	
+	public String stem(String word) {
+		Stemmer s = new Stemmer();
+		s.add(word.toCharArray(), word.length());
+		s.stem();
+		return s.toString();
+	}
 
 	public static void main(String[] args) {
 		if (args.length > 0) {
@@ -160,13 +167,6 @@ public class Comparison {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			// Example usage of stemmer "reading" -> "read"
-			Stemmer s = new Stemmer();
-			s.add("reading".toCharArray(), 7);
-			s.stem();
-			System.out.println("Stemmer converts 'reading' to --> '"
-					+ s.toString() + "'");
 
 			Comparison comparison = new Comparison();
 			DefaultSimilarity vsm = new DefaultSimilarity();
@@ -185,8 +185,7 @@ public class Comparison {
 
 			// 1) search documents with word "tablets" in the title (BM25)
 			inTitle = new LinkedList<String>();
-			inTitle.add("tablet");
-			// inTitle.add("ergonomics");
+			inTitle.add(comparison.stem("tablet"));
 			results = comparison.search(inTitle, null, null, bm25, "BM25");
 			comparison.printResults(results);
 			
@@ -201,12 +200,9 @@ public class Comparison {
 			inTitle = new LinkedList<String>();
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
-			inTitle.add("tablet");
-			inTitle.add("ergonomics");
-			inTitle.add("typing");
-			inAbstract.add("tablet");
-			inAbstract.add("ergonomics");
-			inAbstract.add("typing");
+			inAbstract.add(comparison.stem("tablet"));
+			inAbstract.add(comparison.stem("ergonomics"));
+			inAbstract.add(comparison.stem("typing"));
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
