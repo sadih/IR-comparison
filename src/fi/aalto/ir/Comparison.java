@@ -58,6 +58,12 @@ public class Comparison {
 				Document document = new Document();
 				document.add(new Field("title", doc.getTitle(),
 						TextField.TYPE_STORED));
+				document.add(new Field("abstract", doc.getAbstractText(),
+						TextField.TYPE_STORED));
+				document.add(new Field("tasknumber", Integer.toString(doc.getSearchTaskNumber()),
+						TextField.TYPE_STORED));
+				document.add(new Field("query", doc.getQuery(),
+						TextField.TYPE_STORED));
 				writer.addDocument(document);
 			}
 			writer.commit();
@@ -84,14 +90,17 @@ public class Comparison {
 			BooleanQuery booleanQuery = new BooleanQuery();
 			if (inTitle != null) {
 				for (String term : inTitle) {
-					Query query = new TermQuery(new Term("title", term));
+					//Query query = new TermQuery(new Term("title", term));
+					Query query = new TermQuery(new Term("query", term));
+					//Query query1 = new TermQuery(new Term("abstract", "tablet"));
 					booleanQuery.add(query, BooleanClause.Occur.MUST);
+					//booleanQuery.add(query1, BooleanClause.Occur.MUST);
 				}
 			}
 
-			ScoreDoc[] docs = searcher.search(booleanQuery, 100).scoreDocs;
+			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
-				results.add(searcher.doc(docs[i].doc).get("title"));
+				results.add(searcher.doc(docs[i].doc).get("query"));
 			}
 
 			reader.close();
