@@ -196,7 +196,6 @@ public class Comparison {
 			comparison.index(docs);
 
 			List<String> inAbstract;
-			String taskNumber;
 			List<String> results;
 			
 			// 1) search document with word "tablet" in abstract and taskNumber 16 (BM25)
