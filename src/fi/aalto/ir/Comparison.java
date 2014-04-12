@@ -115,11 +115,18 @@ public class Comparison {
 				}
 			}
 
+			int total_results = 0;
+			int relevant_results = 0;
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
 				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
-						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + " Abstract: " + searcher.doc(docs[i].doc).get("abstract"));
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance"));
+				if (searcher.doc(docs[i].doc).get("relevance").equals("1")) {
+					relevant_results += 1;
+				}
+				total_results += 1;
 			}
+			System.out.println("Relevant results: " + relevant_results + ", total results: " + total_results);
 
 			reader.close();
 
@@ -208,10 +215,10 @@ public class Comparison {
 				inAbstract.add(word);
 			}
 			results = comparisonBM25.search(inAbstract, bm25, "BM25");
-			comparisonBM25.printResults(results);
+			//comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, vsm, "VSM");
-			comparisonVSM.printResults(results);
+			//comparisonVSM.printResults(results);
 			
 			
 			// Second query
@@ -220,10 +227,10 @@ public class Comparison {
 				inAbstract.add(word);
 			}
 			results = comparisonBM25.search(inAbstract, bm25, "BM25");
-			comparisonBM25.printResults(results);
+			//comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, vsm, "VSM");
-			comparisonVSM.printResults(results);
+			//comparisonVSM.printResults(results);
 			
 			
 			// Third query
@@ -232,10 +239,10 @@ public class Comparison {
 				inAbstract.add(word);
 			}
 			results = comparisonBM25.search(inAbstract, bm25, "BM25");
-			comparisonBM25.printResults(results);
+			//comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, vsm, "VSM");
-			comparisonVSM.printResults(results);
+			//comparisonVSM.printResults(results);
 
 			try {
 				directory.close();
