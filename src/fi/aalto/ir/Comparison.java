@@ -123,7 +123,7 @@ public class Comparison {
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
 				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
-						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + " Title: " + searcher.doc(docs[i].doc).get("title"));
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + " Abstract: " + searcher.doc(docs[i].doc).get("abstract"));
 			}
 
 			reader.close();
