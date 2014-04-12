@@ -2,6 +2,7 @@ package fi.aalto.ir;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -182,18 +183,18 @@ public class Comparison {
 			String[]  second_query = "ergonomics tablet typing".split(" ");
 			String[]  third_query = "tablet and ergo*".split(" ");
 			
-			String stemmed_first_query = "";
-			String stemmed_second_query = "";
-			String stemmed_third_query = "";
+			List<String> stemmed_first_query = new ArrayList<String>();
+			List<String> stemmed_second_query = new ArrayList<String>();
+			List<String> stemmed_third_query = new ArrayList<String>();
 			
 			for (String word : first_query) {
-				stemmed_first_query += stem(word) + " ";
+				stemmed_first_query.add(stem(word));
 			}
 			for (String word : second_query) {
-				stemmed_second_query += stem(word) + " ";
+				stemmed_second_query.add(stem(word));
 			}
 			for (String word : third_query) {
-				stemmed_third_query += stem(word) + " ";
+				stemmed_third_query.add(stem(word));
 			}
 			System.out.println(stemmed_first_query);
 			System.out.println(stemmed_second_query);
@@ -216,7 +217,7 @@ public class Comparison {
 
 			// 1) search documents with word "tablets" in the title (BM25)
 			inTitle = new LinkedList<String>();
-			inTitle.add(Comparison.stem("tablet"));
+			//inTitle.add(Comparison.stem("tablet"));
 			results = comparison.search(inTitle, null, null, bm25, "BM25");
 			//comparison.printResults(results);
 			
@@ -231,12 +232,22 @@ public class Comparison {
 			inTitle = new LinkedList<String>();
 			inAbstract = new LinkedList<String>();
 			taskNumber = "16";
+			
+			for (String word : stemmed_first_query) {
+				inAbstract.add(word);
+			}
+			for (String word : stemmed_second_query) {
+				inAbstract.add(word);
+			}
+			for (String word : stemmed_third_query) {
+				inAbstract.add(word);
+			}
 			//inTitle.add(comparison.stem("tablet"));
 			//inTitle.add(comparison.stem("ergonomics"));
 			//inTitle.add(comparison.stem("typing"));
-			inAbstract.add(Comparison.stem("tablet"));
-			inAbstract.add(Comparison.stem("ergonomics"));
-			inAbstract.add(Comparison.stem("typing"));
+			//inAbstract.add(Comparison.stem("tablet"));
+			//inAbstract.add(Comparison.stem("ergonomics"));
+			//inAbstract.add(Comparison.stem("typing"));
 			results = comparison.search(inTitle, inAbstract, taskNumber, bm25, "BM25");
 			comparison.printResults(results);
 			
