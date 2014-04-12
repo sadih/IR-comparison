@@ -46,11 +46,10 @@ public class Comparison {
 
 		IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_42,
 				analyzer);
-		conf.setSimilarity(similarity);
+		conf.setSimilarity(new BM25Similarity());
 		conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		try {
 			IndexWriter writer = new IndexWriter(directory, conf);
-
 			for (DocumentInCollection doc : docs) {
 				/*
 				 * private String title; private String abstractText; private
@@ -144,7 +143,6 @@ public class Comparison {
 
 	public void printResults(List<String> results) {
 		if (results.size() > 0) {
-			Collections.sort(results);
 			for (int i = 0; i < results.size(); i++)
 				System.out.println(" " + (i + 1) + ". " + results.get(i));
 		} else
@@ -189,7 +187,7 @@ public class Comparison {
 			Comparison comparisonVSM = new Comparison();
 			Comparison comparisonBM25 = new Comparison();
 			DefaultSimilarity vsm = new DefaultSimilarity();
-			BM25Similarity bm25 = new BM25Similarity();
+			BM25Similarity bm25 = new BM25Similarity(6.0f, 4.0f);
 
 			DocumentCollectionParser parser = new DocumentCollectionParser();
 			parser.parse(args[0]);
