@@ -196,9 +196,6 @@ public class Comparison {
 			for (String word : third_query) {
 				stemmed_third_query.add(stem(word));
 			}
-			System.out.println(stemmed_first_query);
-			System.out.println(stemmed_second_query);
-			System.out.println(stemmed_third_query);
 
 			Comparison comparison = new Comparison();
 			DefaultSimilarity vsm = new DefaultSimilarity();
