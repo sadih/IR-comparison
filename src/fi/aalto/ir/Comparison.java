@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -113,7 +112,7 @@ public class Comparison {
 
 	}
 
-	public List<String> search(List<String> inAbstract, Similarity similarity, String type, Directory directory) {
+	public List<String> search(List<String> inAbstract, String relevance, Similarity similarity, String type, Directory directory) {
 
 		printQuery(inAbstract, type);
 
@@ -138,13 +137,26 @@ public class Comparison {
 					booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 				}
 			}
+			
+			if (relevance != null) {
+				Query q = new TermQuery(new Term("relevance", "1"));
+				booleanQuery.add(q, BooleanClause.Occur.SHOULD);
+			}
 
+			int total_results = 0;
+			int relevant_results = 0;
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
 				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
-						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + " Abstract: " + searcher.doc(docs[i].doc).get("abstract"));
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance"));
+				if (searcher.doc(docs[i].doc).get("relevance").equals("1")) {
+					relevant_results += 1;
+				}
+				total_results += 1;
 			}
-
+			
+			System.out.println("Relevant results: " + relevant_results + ", total results: " + total_results);
+			
 			reader.close();
 
 		} catch (IOException e) {
@@ -167,7 +179,6 @@ public class Comparison {
 
 	public void printResults(List<String> results) {
 		if (results.size() > 0) {
-			Collections.sort(results);
 			for (int i = 0; i < results.size(); i++)
 				System.out.println(" " + (i + 1) + ". " + results.get(i));
 		} else
@@ -227,46 +238,47 @@ public class Comparison {
 
 			List<String> inAbstract;
 			List<String> results;
-            List<String> results2;
-
-			// 1) search document with word "tablet" in abstract and taskNumber 16 (BM25)
-			inAbstract = new LinkedList<String>();
-
+			List<String> results2;
+			
 			// First query
+			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_first_query) {
 				inAbstract.add(word);
 			}
-            results2 = comparisonVSM.search(inAbstract, vsm, "VSM", directory);
-            comparisonVSM.printResults(results2);
 
-			results = comparisonBM25.search(inAbstract, bm25, "BM25", directory2);
-			comparisonBM25.printResults(results);
-
-
-
-
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
+			//comparisonBM25.printResults(results);
+			
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
+			//comparisonVSM.printResults(results);
+			
 			// Second query
-			/*inAbstract = new LinkedList<String>();
+			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_second_query) {
 				inAbstract.add(word);
 			}
-			results = comparisonBM25.search(inAbstract, bm25, "BM25");
-			comparisonBM25.printResults(results);
 
-			results = comparisonVSM.search(inAbstract, vsm, "VSM");
-			comparisonVSM.printResults(results);
-
-
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
+			//comparisonBM25.printResults(results);
+			
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
+			//comparisonVSM.printResults(results);
+			
 			// Third query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_third_query) {
 				inAbstract.add(word);
 			}
-			results = comparisonBM25.search(inAbstract, bm25, "BM25");
-			comparisonBM25.printResults(results);
-
-			results = comparisonVSM.search(inAbstract, vsm, "VSM");
-			comparisonVSM.printResults(results);*/
+			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
+			//comparisonBM25.printResults(results);
+			
+			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
+			//comparisonVSM.printResults(results);
+			
+			//Fetch ALL WITH RELEVANCE 1
+			results = comparisonBM25.search(null, "1", bm25, "BM25", directory2);
+			
+			results = comparisonVSM.search(null, "1", vsm, "VSM", directory);
 
 			try {
 				if (directory != null) directory.close();
