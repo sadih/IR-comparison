@@ -79,7 +79,6 @@ public class Comparison {
 				 * int searchTaskNumber; private String query; private boolean
 				 * relevant;
 				 */
-
 				if (doc.getSearchTaskNumber() == 16) {
 					String[] abs = doc.getAbstractText().split(" ");
 					String stemmed = "";
@@ -247,10 +246,10 @@ public class Comparison {
 			}
 
 			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			//comparisonBM25.printResults(results);
+			comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			//comparisonVSM.printResults(results);
+			comparisonVSM.printResults(results);
 			
 			// Second query
 			inAbstract = new LinkedList<String>();
@@ -259,10 +258,10 @@ public class Comparison {
 			}
 
 			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			//comparisonBM25.printResults(results);
+			comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			//comparisonVSM.printResults(results);
+			comparisonVSM.printResults(results);
 			
 			// Third query
 			inAbstract = new LinkedList<String>();
@@ -270,15 +269,18 @@ public class Comparison {
 				inAbstract.add(word);
 			}
 			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			//comparisonBM25.printResults(results);
+			comparisonBM25.printResults(results);
 			
 			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			//comparisonVSM.printResults(results);
+			comparisonVSM.printResults(results);
 			
 			//Fetch ALL WITH RELEVANCE 1
-			results = comparisonBM25.search(null, "1", bm25, "BM25", directory2);
+			inAbstract = new LinkedList<String>();
+			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
+			comparisonBM25.printResults(results);
 			
-			results = comparisonVSM.search(null, "1", vsm, "VSM", directory);
+			results = comparisonVSM.search(inAbstract, "1", vsm, "VSM", directory);
+			comparisonVSM.printResults(results);
 
 			try {
 				if (directory != null) directory.close();
