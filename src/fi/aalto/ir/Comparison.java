@@ -219,6 +219,10 @@ public class Comparison {
 			for (String word : third_query) {
 				stemmed_third_query.add(stem(word));
 			}
+			List<List<String>> queries = new ArrayList<List<String>>();
+			queries.add(stemmed_first_query);
+			queries.add(stemmed_second_query);
+			queries.add(stemmed_third_query);
 
 			Comparison comparisonVSM = new Comparison();
 			Comparison comparisonBM25 = new Comparison();
@@ -234,47 +238,25 @@ public class Comparison {
 
 			List<String> inAbstract;
 			List<String> results;
-			List<String> results2;
 			
 			// Count of relevant documents
 			inAbstract = new LinkedList<String>();
 			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
 			int amountOfRelevant = results.size();
 			
-			// First query
-			inAbstract = new LinkedList<String>();
-			for (String word : stemmed_first_query) {
-				inAbstract.add(word);
-			}
+			
+			for (List<String> query : queries) {
+				inAbstract = new LinkedList<String>();
+				for (String word : query) {
+					inAbstract.add(word);
+				}
 
-			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			comparisonBM25.printResults(results);
-			
-			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			comparisonVSM.printResults(results);
-			
-			// Second query
-			inAbstract = new LinkedList<String>();
-			for (String word : stemmed_second_query) {
-				inAbstract.add(word);
+				results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
+				comparisonBM25.printResults(results);
+				
+				results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
+				comparisonVSM.printResults(results);
 			}
-
-			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			comparisonBM25.printResults(results);
-			
-			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			comparisonVSM.printResults(results);
-			
-			// Third query
-			inAbstract = new LinkedList<String>();
-			for (String word : stemmed_third_query) {
-				inAbstract.add(word);
-			}
-			results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-			comparisonBM25.printResults(results);
-			
-			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-			comparisonVSM.printResults(results);
 			
 			try {
 				if (directory != null) directory.close();
