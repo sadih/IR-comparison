@@ -239,7 +239,7 @@ public class Comparison {
 			// Count of relevant documents
 			inAbstract = new LinkedList<String>();
 			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
-			int relevantDocs = results.size();
+			int amountOfRelevant = results.size();
 			
 			// First query
 			inAbstract = new LinkedList<String>();
