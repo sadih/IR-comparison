@@ -146,8 +146,8 @@ public class Comparison {
 			int relevant_results = 0;
 			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
 			for (int i = 0; i < docs.length; i++) {
-				results.add(searcher.doc(docs[i].doc).get("query") + ", taskNumber: " + searcher.doc(docs[i].doc).get("tasknumber") +
-						", Relevant: " + searcher.doc(docs[i].doc).get("relevance"));
+				results.add(searcher.doc(docs[i].doc).get("query") +
+						", Relevant: " + searcher.doc(docs[i].doc).get("relevance") + ", score: " + docs[i].score);
 				if (searcher.doc(docs[i].doc).get("relevance").equals("1")) {
 					relevant_results += 1;
 				}
