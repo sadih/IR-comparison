@@ -3,9 +3,8 @@ package fi.aalto.ir;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -17,13 +16,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -33,52 +26,32 @@ import org.apache.lucene.util.Version;
 
 public class Comparison {
 
-	//public static Directory directory = null;
+	public Directory directory = null;
 	public Analyzer analyzer = null;
+    public int docsCount = 0;
+
+    public Similarity similarity = null;
 
 	public Comparison() {
 
 	}
 
-    public void toCSV() {
-        File dataFile = new File(new File("curves"), "data.csv");
-        try {
-            FileWriter ostream = null;
-            try {
-                ostream = new FileWriter(dataFile);
-                // Write header line
-                ostream.write("recall, percision\n");
-                for (double i = 0.0; i <= 1.0; i++) {
-                    ostream.write(i + ", 0.35\n");
-                }
-                /*val dataMaps = dataSets.map(ds => ds.points.toMap)
-                val nValues = dataMaps.foldLeft(Set[XT]())((result, m) => result union m.keySet)
-                for (n <- nValues.toSeq.sorted) {
-                    ostream.write(n + ", " + dataMaps.map(m => if (m.contains(n)) m(n).toString else "").mkString(", ") + "\n")
-                }*/
-            } finally {
-                if (ostream != null) ostream.close();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    public Comparison(Similarity similarity, Directory directory, int docsCount) {
+        this.similarity = similarity;
+        this.directory = directory;
+        this.docsCount = docsCount;
     }
 
-	public void index(List<DocumentInCollection> docs, Similarity similarity, Directory directory) {
-		analyzer = new StandardAnalyzer(Version.LUCENE_42); // Uses default
+    public void index(List<DocumentInCollection> docs) {
+		this.analyzer = new StandardAnalyzer(Version.LUCENE_42); // Uses default
 															// StopAnalyzer.ENGLISH_STOP_WORDS_SET
 
-		IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_42, analyzer);
-		conf.setSimilarity(similarity);
+		IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_42, this.analyzer);
+		conf.setSimilarity(this.similarity);
 		conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		try {
-			IndexWriter writer = new IndexWriter(directory, conf);
+			IndexWriter writer = new IndexWriter(this.directory, conf);
 			for (DocumentInCollection doc : docs) {
-				/*
-				 * private String title; private String abstractText; private
-				 * int searchTaskNumber; private String query; private boolean
-				 * relevant;
-				 */
 				String[] abs = doc.getAbstractText().split(" ");
 				String stemmed = "";
 
@@ -87,13 +60,7 @@ public class Comparison {
 				}
 
 				Document document = new Document();
-				document.add(new Field("title", doc.getTitle(),
-						TextField.TYPE_STORED));
 				document.add(new Field("abstract", stemmed,
-						TextField.TYPE_STORED));
-				document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
-						TextField.TYPE_STORED));
-				document.add(new Field("query", doc.getQuery(),
 						TextField.TYPE_STORED));
 				document.add(new Field("relevance", doc.isRelevant() && (doc.getSearchTaskNumber() == 16) ? "1" : "0",
                         TextField.TYPE_STORED));
@@ -109,17 +76,16 @@ public class Comparison {
 
 	}
 
-	public List<String> search(List<String> inAbstract, String relevance, Similarity similarity, String type, Directory directory) {
+	public List<String> search(List<String> inAbstract, String relevance, String type) {
 
 		printQuery(inAbstract, type);
 
 		List<String> results = new LinkedList<String>();
 
-		// implement the Lucene search here
 		try {
-			IndexReader reader = DirectoryReader.open(directory);
+			IndexReader reader = DirectoryReader.open(this.directory);
 			IndexSearcher searcher = new IndexSearcher(reader);
-			searcher.setSimilarity(similarity);
+			searcher.setSimilarity(this.similarity);
 
 			BooleanQuery booleanQuery = new BooleanQuery();
 			booleanQuery.setMinimumNumberShouldMatch(1);
@@ -142,10 +108,10 @@ public class Comparison {
 
 			int total_results = 0;
 			int relevant_results = 0;
-			ScoreDoc[] docs = searcher.search(booleanQuery, 1000).scoreDocs;
-			for (int i = 0; i < docs.length; i++) {
-				results.add(searcher.doc(docs[i].doc).get("relevance"));
-				if (searcher.doc(docs[i].doc).get("relevance").equals("1")) {
+			ScoreDoc[] docs = searcher.search(booleanQuery, this.docsCount).scoreDocs;
+			for (ScoreDoc sd : docs) {
+				results.add(searcher.doc(sd.doc).get("relevance"));
+				if (searcher.doc(sd.doc).get("relevance").equals("1")) {
 					relevant_results += 1;
 				}
 				total_results += 1;
@@ -173,13 +139,13 @@ public class Comparison {
 		System.out.println("):");
 	}
 
-	public void printResults(List<String> results) {
+	/*public void printResults(List<String> results) {
 		if (results.size() > 0) {
 			for (int i = 0; i < results.size(); i++)
 				System.out.println(" " + (i + 1) + ". " + results.get(i));
 		} else
 			System.out.println(" no results");
-	}
+	}*/
 
 	public static String stem(String word) {
 		Stemmer s = new Stemmer();
@@ -187,6 +153,64 @@ public class Comparison {
 		s.stem();
 		return s.toString();
 	}
+
+    public static List<double[]> calculate(List<String> results, int countOfRelevants) {
+        List<String> xs = new ArrayList<String>();
+        List<double[]> prerecall = new ArrayList<double[]>();
+        for (String result : results) {
+            xs.add(result);
+            prerecall.add(recallAndPrecision(xs, countOfRelevants));
+        }
+        return steps(prerecall);
+    }
+
+    public static List<double[]> steps(List<double[]> recalpres) {
+        double step = 0.0;
+        List<double[]> steps = new ArrayList<double[]>();
+        for (double[] recalpre : recalpres) {
+            if (recalpre[0] >= step && step <= 1) {
+                steps.add(recalpre);
+                step += 0.1;
+            }
+        }
+        return steps;
+    }
+
+    public static double[] recallAndPrecision(List<String> results, int countOfRelevants) {
+        double tp = 0;
+        double fp = 0;
+        for (String result : results) {
+            if (result.equals("1")) {
+                tp++;
+            } else {
+                fp++;
+            }
+        }
+        double fn = countOfRelevants - tp;
+        double recall = tp / (tp + fn);
+        double precision = tp / (tp + fp);
+        return new double[]{recall, precision};
+    }
+
+    public void toCSV(String name, List<double[]> results) {
+        File dataFile = new File(new File("diagrams"), name + ".csv");
+        DecimalFormat df = new DecimalFormat("0.00");
+        try {
+            FileWriter stream = null;
+            try {
+                stream = new FileWriter(dataFile);
+                // Write header line
+                stream.write("recall, percision\n");
+                for (double[] result : results) {
+                    stream.write(df.format(result[0]) + ", " + df.format(result[1]) + "\n");
+                }
+            } finally {
+                if (stream != null) stream.close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 	public static void main(String[] args) {
 		if (args.length > 0) {
@@ -219,43 +243,48 @@ public class Comparison {
 			for (String word : third_query) {
 				stemmed_third_query.add(stem(word));
 			}
-			List<List<String>> queries = new ArrayList<List<String>>();
-			queries.add(stemmed_first_query);
-			queries.add(stemmed_second_query);
-			queries.add(stemmed_third_query);
 
-			Comparison comparisonVSM = new Comparison();
-			Comparison comparisonBM25 = new Comparison();
-			DefaultSimilarity vsm = new DefaultSimilarity();
-			BM25Similarity bm25 = new BM25Similarity();
+			Map<String, List<String>> queries = new HashMap<String, List<String>>();
+			queries.put("first", stemmed_first_query);
+			queries.put("second", stemmed_second_query);
+			queries.put("third", stemmed_third_query);
 
-			DocumentCollectionParser parser = new DocumentCollectionParser();
-			parser.parse(args[0]);
-			List<DocumentInCollection> docs = parser.getDocuments();
 
-			comparisonVSM.index(docs, vsm, directory);
-			comparisonBM25.index(docs, bm25, directory2);
+            DocumentCollectionParser parser = new DocumentCollectionParser();
+            parser.parse(args[0]);
+            List<DocumentInCollection> docs = parser.getDocuments();
+            int count = docs.size();
+
+            DefaultSimilarity vsm = new DefaultSimilarity();
+            BM25Similarity bm25 = new BM25Similarity();
+            Comparison comparisonVSM = new Comparison(vsm, directory, count);
+			Comparison comparisonBM25 = new Comparison(bm25, directory2, count);
+
+            comparisonVSM.index(docs);
+			comparisonBM25.index(docs);
+
 
 			List<String> inAbstract;
 			List<String> results;
 			
 			// Count of relevant documents
 			inAbstract = new LinkedList<String>();
-			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
-			int amountOfRelevant = results.size();
-			
-			
-			for (List<String> query : queries) {
+			results = comparisonBM25.search(inAbstract, "1", "BM25");
+			int countOfRelevant = results.size();
+
+            for (Map.Entry<String, List<String>> query : queries.entrySet()) {
 				inAbstract = new LinkedList<String>();
-				for (String word : query) {
+				for (String word : query.getValue()) {
 					inAbstract.add(word);
 				}
 
-				results = comparisonBM25.search(inAbstract, null, bm25, "BM25", directory2);
-				comparisonBM25.printResults(results);
-				
-				results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
-				comparisonVSM.printResults(results);
+				results = comparisonBM25.search(inAbstract, null, "BM25");
+
+                comparisonBM25.toCSV(query.getKey() + "_BM25", calculate(results, countOfRelevant));
+
+				results = comparisonVSM.search(inAbstract, null, "VSM");
+
+                comparisonVSM.toCSV(query.getKey() + "_VSM", calculate(results, countOfRelevant));
 			}
 			
 			try {

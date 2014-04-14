@@ -10,17 +10,16 @@
         font: 12px sans-serif;
         border: 1px solid #ccd;
         border-radius: 5px;
-        background: #eef;
+        background: #f8f8f8;
     }
     svg.linesPlot .axis path,
     svg.linesPlot .axis line {
         fill: none;
-        stroke: #000;
+        stroke: #222;
         shape-rendering: crispEdges;
     }
     svg.linesPlot .x.axis path {
-        #display: none;
-        stroke: #000;
+        stroke: #222;
     }
     svg.linesPlot .line {
         fill: none;
@@ -29,7 +28,14 @@
     }
 </style>
 <body>
-<svg class="linesPlot" id="chart"></svg>
+<svg class="linesPlot" id="first-bm25"></svg>
+<svg class="linesPlot" id="first-vsm"></svg>
+
+<svg class="linesPlot" id="second-bm25"></svg>
+<svg class="linesPlot" id="second-vsm"></svg>
+
+<svg class="linesPlot" id="third-bm25"></svg>
+<svg class="linesPlot" id="third-vsm"></svg>
 
 <script>
     function makeLinesPlot(htmlElement, dataFile, width, height, left, right) {
@@ -119,7 +125,14 @@
 
     };
 
-    makeLinesPlot("chart", "./data.csv", 900, 500, 50, 100);
+    makeLinesPlot("first-bm25", "./first_BM25.csv", 900, 500, 50, 100);
+    makeLinesPlot("first-vsm", "./first_VSM.csv", 900, 500, 50, 100);
+
+    makeLinesPlot("second-bm25", "./second_BM25.csv", 900, 500, 50, 100);
+    makeLinesPlot("second-vsm", "./second_VSM.csv", 900, 500, 50, 100);
+
+    makeLinesPlot("third-bm25", "./third_BM25.csv", 900, 500, 50, 100);
+    makeLinesPlot("third-vsm", "./third_VSM.csv", 900, 500, 50, 100);
 </script>
 </body>
 </html>
