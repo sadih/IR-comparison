@@ -6,4 +6,7 @@
 .settings/
 .DS_Store
 indicies/
+indicies2/
 bin/
+out/
+node_modules/

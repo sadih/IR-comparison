@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> A plot</title>
+    <script src="http://d3js.org/d3.v3.js"></script>
+</head>
+<style>
+    svg.linesPlot {
+        font: 12px sans-serif;
+        border: 1px solid #ccd;
+        border-radius: 5px;
+        background: #eef;
+    }
+    svg.linesPlot .axis path,
+    svg.linesPlot .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+    svg.linesPlot .x.axis path {
+        #display: none;
+        stroke: #000;
+    }
+    svg.linesPlot .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1px;
+    }
+</style>
+<body>
+<svg class="linesPlot" id="chart"></svg>
+
+<script>
+    function makeLinesPlot(htmlElement, dataFile, width, height, left, right) {
+        var margin = {top: 20, bottom: 30, left: left, right: right};
+        var plotWidth = width - margin.left - margin.right;
+        var plotHeight = height - margin.top - margin.bottom;
+
+        var x = d3.scale.linear().range([0, plotWidth]);
+
+        var y = d3.scale.linear().range([plotHeight, 0]);
+
+        var color = d3.scale.category10();
+
+        var xAxis = d3.svg.axis().scale(x).orient("bottom");
+
+        var yAxis = d3.svg.axis().scale(y).orient("left");
+
+        var line = d3.svg.line()
+            //.interpolate("step-after")
+                .x(function(d) { return x(d.recall); })
+                .y(function(d) { return y(d.percision); });
+
+        var svg = d3.select("#"+htmlElement)
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        d3.csv(dataFile, function(error, data) {
+            color.domain(d3.keys(data[0]).filter(function(key) { return key !== "recall"; }));
+
+            var algs = color.domain().map(function(name) {
+                return {
+                    name: name,
+                    values: data.map(function(d) {
+                        return {recall: d.recall, percision: +d[name]};
+                    })
+                };
+            });
+
+            x.domain([
+                d3.min(data, function(d) { return parseFloat(d.recall); }),
+                d3.max(data, function(d) { return parseFloat(d.recall); })
+            ]);
+
+            y.domain([
+                d3.min(algs, function(c) { return d3.min(c.values, function(v) { return v.percision; }); }),
+                d3.max(algs, function(c) { return d3.max(c.values, function(v) { return v.percision; }); })
+            ]);
+
+            svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + plotHeight + ")")
+                    .call(xAxis)
+                    .append("text")
+                    .attr("x", plotWidth)
+                    .attr("dy", "-.71em")
+                    .style("text-anchor", "start")
+                    .text("Recall");
+
+            svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Percision");
+
+            var alg = svg.selectAll(".alg")
+                    .data(algs)
+                    .enter().append("g")
+                    .attr("class", "alg");
+
+            alg.append("path")
+                    .attr("class", "line")
+                    .attr("d", function(d) { return line(d.values); })
+                    .style("stroke", function(d) { return color(d.name); });
+
+            alg.append("text")
+                    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+                    .attr("transform", function(d) { return "translate(" + x(d.value.recall) + "," + y(d.value.percision) + ")"; })
+                    .attr("x", 3)
+                    .attr("dy", ".35em");
+        });
+
+    };
+
+    makeLinesPlot("chart", "./data.csv", 900, 500, 50, 100);
+</script>
+</body>
+</html>
