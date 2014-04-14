@@ -236,6 +236,11 @@ public class Comparison {
 			List<String> results;
 			List<String> results2;
 			
+			// Count of relevant documents
+			inAbstract = new LinkedList<String>();
+			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
+			int relevantDocs = results.size();
+			
 			// First query
 			inAbstract = new LinkedList<String>();
 			for (String word : stemmed_first_query) {
@@ -271,14 +276,6 @@ public class Comparison {
 			results = comparisonVSM.search(inAbstract, null, vsm, "VSM", directory);
 			comparisonVSM.printResults(results);
 			
-			//Fetch ALL WITH RELEVANCE 1
-			inAbstract = new LinkedList<String>();
-			results = comparisonBM25.search(inAbstract, "1", bm25, "BM25", directory2);
-			comparisonBM25.printResults(results);
-			
-			results = comparisonVSM.search(inAbstract, "1", vsm, "VSM", directory);
-			comparisonVSM.printResults(results);
-
 			try {
 				if (directory != null) directory.close();
                 if (directory2 != null) directory2.close();
