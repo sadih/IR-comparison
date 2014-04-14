@@ -79,28 +79,26 @@ public class Comparison {
 				 * int searchTaskNumber; private String query; private boolean
 				 * relevant;
 				 */
-				if (doc.getSearchTaskNumber() == 16) {
-					String[] abs = doc.getAbstractText().split(" ");
-					String stemmed = "";
+				String[] abs = doc.getAbstractText().split(" ");
+				String stemmed = "";
 
-					for (String word : abs) {
-						stemmed += stem(word) + " ";
-					}
-
-					Document document = new Document();
-					document.add(new Field("title", doc.getTitle(),
-							TextField.TYPE_STORED));
-					document.add(new Field("abstract", stemmed,
-							TextField.TYPE_STORED));
-					document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
-							TextField.TYPE_STORED));
-					document.add(new Field("query", doc.getQuery(),
-							TextField.TYPE_STORED));
-					document.add(new Field("relevance", doc.isRelevant() ? "1" : "0",
-                            TextField.TYPE_STORED));
-
-					writer.addDocument(document);
+				for (String word : abs) {
+					stemmed += stem(word) + " ";
 				}
+
+				Document document = new Document();
+				document.add(new Field("title", doc.getTitle(),
+						TextField.TYPE_STORED));
+				document.add(new Field("abstract", stemmed,
+						TextField.TYPE_STORED));
+				document.add(new Field("tasknumber", doc.getSearchTaskNumber() + "",
+						TextField.TYPE_STORED));
+				document.add(new Field("query", doc.getQuery(),
+						TextField.TYPE_STORED));
+				document.add(new Field("relevance", doc.isRelevant() && (doc.getSearchTaskNumber() == 16) ? "1" : "0",
+                        TextField.TYPE_STORED));
+
+				writer.addDocument(document);
 			}
 			writer.commit();
 			writer.close();
