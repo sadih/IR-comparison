@@ -128,6 +128,26 @@ public class Comparison {
 		return results;
 	}
 
+    public void toCSV(String name, List<double[]> results) {
+        File dataFile = new File(new File("diagrams"), name + ".csv");
+        DecimalFormat df = new DecimalFormat("0.00");
+        try {
+            FileWriter stream = null;
+            try {
+                stream = new FileWriter(dataFile);
+                // Write header line
+                stream.write("recall, percision\n");
+                for (double[] result : results) {
+                    stream.write(df.format(result[0]) + ", " + df.format(result[1]) + "\n");
+                }
+            } finally {
+                if (stream != null) stream.close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 	public void printQuery(List<String> inAbstract, String type) {
 		System.out.print("Search (");
 		if (inAbstract != null) {
@@ -167,13 +187,39 @@ public class Comparison {
     public static List<double[]> steps(List<double[]> recalpres) {
         double step = 0.0;
         List<double[]> steps = new ArrayList<double[]>();
-        for (double[] recalpre : recalpres) {
+        for (double[] recalpre : averagePercision(recalpres)) {
             if (recalpre[0] >= step && step <= 1) {
                 steps.add(recalpre);
                 step += 0.1;
             }
         }
         return steps;
+    }
+
+    public static List<double[]> averagePercision(List<double[]> recalpres) {
+        List<double[]> averages = new ArrayList<double[]>();
+        for (Map.Entry<Double, List<Double>> grouped : groupByRecall(recalpres).entrySet()) {
+            double sum = 0.0;
+            int length = grouped.getValue().size();
+            for (double val : grouped.getValue()) {
+                sum += val;
+            }
+            averages.add(new double[]{grouped.getKey(), sum/length});
+        }
+        return averages;
+    }
+
+    public static Map<Double, List<Double>> groupByRecall(List<double[]> recalpres) {
+        Map<Double, List<Double>> grouped = new TreeMap<Double, List<Double>>();
+        for (double[] recalpre : recalpres) {
+            List<Double> values = grouped.get(recalpre[0]);
+            if (values != null) {
+                values.add(recalpre[1]);
+            } else {
+                grouped.put(recalpre[0], new ArrayList<Double>(Arrays.asList(recalpre[1])));
+            }
+        }
+        return grouped;
     }
 
     public static double[] recallAndPrecision(List<String> results, int countOfRelevants) {
@@ -190,26 +236,6 @@ public class Comparison {
         double recall = tp / (tp + fn);
         double precision = tp / (tp + fp);
         return new double[]{recall, precision};
-    }
-
-    public void toCSV(String name, List<double[]> results) {
-        File dataFile = new File(new File("diagrams"), name + ".csv");
-        DecimalFormat df = new DecimalFormat("0.00");
-        try {
-            FileWriter stream = null;
-            try {
-                stream = new FileWriter(dataFile);
-                // Write header line
-                stream.write("recall, percision\n");
-                for (double[] result : results) {
-                    stream.write(df.format(result[0]) + ", " + df.format(result[1]) + "\n");
-                }
-            } finally {
-                if (stream != null) stream.close();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
 	public static void main(String[] args) {
