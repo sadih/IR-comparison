@@ -191,10 +191,7 @@ public class Comparison {
         double step = 0.0;
         List<double[]> steps = new ArrayList<double[]>();
         for (double[] recalpre : averagePercision(recalpres)) {
-            if (recalpre[0] >= step && step <= 1) {
-                steps.add(recalpre);
-                step += 0.1;
-            }
+            steps.add(recalpre);
         }
         return steps;
     }
@@ -261,7 +258,7 @@ public class Comparison {
             int scenario = 16;
 
             // Testing with another scenario. Our queries doesn't match the index very well.
-           /* String[] first_query = "data visualize display dataset".split(" ");
+            /*String[] first_query = "data visualize display dataset".split(" ");
             String[] second_query = "complex data set display".split(" ");
             String[] third_query = "large data set visualization".split(" ");
             int scenario = 13;*/
