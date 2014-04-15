@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.10.3)  12 APR 2014 15:13
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.10.3)  15 APR 2014 00:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -647,11 +647,7 @@ Now handling font encoding U ...
    defining Unicode char U+2026 (decimal 8230)
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
-))
-(/usr/local/texlive/2013/texmf-dist/tex/latex/lipsum/lipsum.sty
-Package: lipsum 2011/04/14 v1.2 150 paragraphs of Lorem Ipsum dummy text
-\c@lips@count=\count122
-) (./report.aux)
+)) (./report.aux)
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
@@ -673,16 +669,16 @@ File: t1pnc.fd 2001/06/04 font definitions for T1/pnc.
 ABD: EveryShipout initializing macros
 (/usr/local/texlive/2013/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count123
+\scratchcounter=\count122
 \scratchdimen=\dimen163
 \scratchbox=\box35
-\nofMPsegments=\count124
-\nofMParguments=\count125
+\nofMPsegments=\count123
+\nofMParguments=\count124
 \everyMPshowfont=\toks27
-\MPscratchCnt=\count126
+\MPscratchCnt=\count125
 \MPscratchDim=\dimen164
-\MPnumerator=\count127
-\makeMPintoPDFobject=\count128
+\MPnumerator=\count126
+\makeMPintoPDFobject=\count127
 \everyMPtoPDFconversion=\toks28
 ) (/usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
@@ -780,7 +776,12 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 30.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 30.
- (./report.toc
+ [1
+
+
+{/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2
+
+] (./report.toc
 LaTeX Font Info:    Font shape `T1/pnc/bx/n' in size <10.95> not available
 (Font)              Font shape `T1/pnc/b/n' tried instead on input line 1.
 )
@@ -788,48 +789,51 @@ LaTeX Font Info:    Font shape `T1/pnc/bx/n' in size <10.95> not available
 \openout4 = `report.toc'.
 
 
-[1
+[3] [4
 
-
-{/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2
-
-] [3] [4
+] [5] [6
 
 ]
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/phv/b/n' tried instead on input line 40.
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 51.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 10.40245pt on input line 40.
+(Font)              scaled to size 10.40245pt on input line 51.
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <12> not available
-(Font)              Font shape `T1/phv/b/n' tried instead on input line 40.
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 51.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 11.39996pt on input line 40.
- [5] [6
-
-] [7] [8
+(Font)              scaled to size 11.39996pt on input line 51.
+ [7] [8
 
 ] [9] [10
 
 ] [11] [12
 
-] [13] (./report.aux) ) 
+]
+Overfull \hbox (5.67432pt too wide) in paragraph at lines 72--73
+\T1/pnc/m/n/10.95 ver-sity press, 2009. Avail-able through: http://nlp.stanford
+.edu/IR-book/pdf/ 
+ []
+
+[13] [14
+
+] [15] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 12509 strings out of 493315
- 230735 string characters out of 6137904
- 776372 words of memory out of 5000000
- 15701 multiletter control sequences out of 15000+600000
- 25556 words of font info for 39 fonts, out of 8000000 for 9000
+ 12337 strings out of 493315
+ 228676 string characters out of 6137904
+ 684861 words of memory out of 5000000
+ 15529 multiletter control sequences out of 15000+600000
+ 32641 words of font info for 45 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 70i,6n,59p,447b,193s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 70i,6n,59p,768b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/base
 /8r.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb
 ></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/ncntrsbk/uncb8a.pfb></usr/
-local/texlive/2013/texmf-dist/fonts/type1/urw/ncntrsbk/uncr8a.pfb>
-Output written on report.pdf (13 pages, 42127 bytes).
+local/texlive/2013/texmf-dist/fonts/type1/urw/ncntrsbk/uncr8a.pfb></usr/local/t
+exlive/2013/texmf-dist/fonts/type1/urw/ncntrsbk/uncri8a.pfb>
+Output written on report.pdf (15 pages, 54848 bytes).
 PDF statistics:
- 63 PDF objects out of 1000 (max. 8388607)
- 44 compressed objects within 1 object stream
+ 73 PDF objects out of 1000 (max. 8388607)
+ 51 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -8,9 +8,10 @@
 %\usepackage[<language>]{babel}
 
 % The authors of the report
-\author{Sadi Hossain, Patrik Vilja and Peter Vilja}
+\author{Sadi Hossain 69423U \newline Patrik Vilja 401531 \newline Peter Vilja 401544}
 % The title of the report
-\title{The Title of the Report}
+\title{T-75.4400 Information Retrieval}
+
 
 
 
@@ -23,14 +24,25 @@
 % uncomment and give the language name as the optional argument
 %\draftabstract[<language>]{\lipsum[4-6]}
 
-
+%% Preface
+% If you write this somewhere else than in Helsinki, use the optional location.
+\begin{preface}%[Optional location (if not defined, Helsinki)]
+{\Huge T-75.4400 Information Retrieval}
+{\huge Group 15: Tablet ergonomics}
+\end{preface}
 
 %% Table of contents of the whole report
 \tableofcontents
 
 %% The main matter, one can obviously use \input or \include
 \chapter{Introduction}
-What is the point and why we're doing shit.
+The documents are indexed with lucene. The queries searches results from the index instead of searching results from the documents itselfs. All the words in the index can be stemmed if it improves 
+
+During the implementation we had some difficulties to understand what we exactly wanted to calculate and how the results should be presented. First we seemed to get same results for VSM and BM25 but later noticed that also the order of results counts.
+
+We decided to use d3.js JavaScript library to draw the recall curves. Search application writes the results to csv files and then JavaScript reads the files and draws the curves from the results. The library was new for us and took some time to learn. In the end we spend much more time actually implementing the search than showing the result with d3.js.
+
+Our solution uses stop words and Porter stemmer to shorten the words in the query. Stop words is word which occurs many time in different contexts and thats why they are not easing the search. For example “and”, “are” and “by” are stop words which are ignored while searching. Lucene uses stop words by default in StandardAnalyzer. It automatically ignores stop words in search, this means that if the query contains stop word search won’t find any results with the stop word. Porter stemmer shortens the words to the base form. Now while indexing the documents we can stem the words in the document and while searching documents we can stem the words in the query. Stemming can either increase or decrease the effectiveness of query. 
 
 %% An example of setting the chapter author
 %\chapterauthor{John Doe}
@@ -57,6 +69,7 @@ Jaaa sitten on hirvee määrä tekstiä evaluoinnista.
 Mitä opittiin? kaikkee jännää.
 
 \chapter{References}
+Manning, Christopher D., Prabhakar Raghavan, and Hinrich Schütze. \textit {Introduction to information retrieval}. [e-book] Cambridge: Cambridge university press, 2009. Available through: http://nlp.stanford.edu/IR-book/pdf/\newline irbookonlinereading.pdf [Accessed: 14 Apr 2014].
 
 \chapter{Contributions}
 

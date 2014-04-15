@@ -261,13 +261,14 @@ public class Comparison {
 			List<String> stemmed_third_query = new ArrayList<String>();
 
 			for (String word : first_query) {
-				stemmed_first_query.add(stem(word));
+				stemmed_first_query.add(stem(word).toLowerCase());
 			}
+			System.out.println(stemmed_first_query);
 			for (String word : second_query) {
-				stemmed_second_query.add(stem(word));
+				stemmed_second_query.add(stem(word).toLowerCase());
 			}
 			for (String word : third_query) {
-				stemmed_third_query.add(stem(word));
+				stemmed_third_query.add(stem(word).toLowerCase());
 			}
 
 			Map<String, List<String>> queries = new HashMap<String, List<String>>();
