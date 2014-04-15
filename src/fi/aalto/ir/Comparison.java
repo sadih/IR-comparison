@@ -29,6 +29,7 @@ public class Comparison {
 	public Directory directory = null;
 	public Analyzer analyzer = null;
     public int docsCount = 0;
+    public int scenario = 0;
 
     public Similarity similarity = null;
 
@@ -36,10 +37,11 @@ public class Comparison {
 
 	}
 
-    public Comparison(Similarity similarity, Directory directory, int docsCount) {
+    public Comparison(Similarity similarity, Directory directory, int docsCount, int scenario) {
         this.similarity = similarity;
         this.directory = directory;
         this.docsCount = docsCount;
+        this.scenario = scenario;
     }
 
     public void index(List<DocumentInCollection> docs) {
@@ -56,13 +58,14 @@ public class Comparison {
 				String stemmed = "";
 
 				for (String word : abs) {
-					stemmed += stem(word) + " ";
+					stemmed += stem(word).toLowerCase() + " ";
 				}
+                String relevant = (doc.isRelevant() && doc.getSearchTaskNumber() == this.scenario) ? "1" : "0";
 
-				Document document = new Document();
+                Document document = new Document();
 				document.add(new Field("abstract", stemmed,
 						TextField.TYPE_STORED));
-				document.add(new Field("relevance", doc.isRelevant() && (doc.getSearchTaskNumber() == 16) ? "1" : "0",
+				document.add(new Field("relevance", relevant,
                         TextField.TYPE_STORED));
 
 				writer.addDocument(document);
@@ -102,7 +105,7 @@ public class Comparison {
 			}
 			
 			if (relevance != null) {
-				Query q = new TermQuery(new Term("relevance", "1"));
+                Query q = new TermQuery(new Term("relevance", "1"));
 				booleanQuery.add(q, BooleanClause.Occur.SHOULD);
 			}
 
@@ -136,7 +139,7 @@ public class Comparison {
             try {
                 stream = new FileWriter(dataFile);
                 // Write header line
-                stream.write("recall, percision\n");
+                stream.write("recall, precision\n");
                 for (double[] result : results) {
                     stream.write(df.format(result[0]) + ", " + df.format(result[1]) + "\n");
                 }
@@ -252,9 +255,17 @@ public class Comparison {
 				e.printStackTrace();
 			}
 
-			String[] first_query = "Ergonomics and modern devices".split(" ");
+			String[] first_query = "ergonomics and modern devices".split(" ");
 			String[] second_query = "ergonomics tablet typing".split(" ");
 			String[] third_query = "tablet and ergo*".split(" ");
+            int scenario = 16;
+
+            // Testing with another scenario. Our queries doesn't match the index very well.
+           /* String[] first_query = "data visualize display dataset".split(" ");
+            String[] second_query = "complex data set display".split(" ");
+            String[] third_query = "large data set visualization".split(" ");
+            int scenario = 13;*/
+
 
 			List<String> stemmed_first_query = new ArrayList<String>();
 			List<String> stemmed_second_query = new ArrayList<String>();
@@ -284,8 +295,8 @@ public class Comparison {
 
             DefaultSimilarity vsm = new DefaultSimilarity();
             BM25Similarity bm25 = new BM25Similarity();
-            Comparison comparisonVSM = new Comparison(vsm, directory, count);
-			Comparison comparisonBM25 = new Comparison(bm25, directory2, count);
+            Comparison comparisonVSM = new Comparison(vsm, directory, count, scenario);
+			Comparison comparisonBM25 = new Comparison(bm25, directory2, count, scenario);
 
             comparisonVSM.index(docs);
 			comparisonBM25.index(docs);
@@ -295,8 +306,7 @@ public class Comparison {
 			List<String> results;
 			
 			// Count of relevant documents
-			inAbstract = new LinkedList<String>();
-			results = comparisonBM25.search(inAbstract, "1", "BM25");
+			results = comparisonBM25.search(null, "1", "BM25");
 			int countOfRelevant = results.size();
 
             for (Map.Entry<String, List<String>> query : queries.entrySet()) {

@@ -56,7 +56,7 @@
         var line = d3.svg.line()
             //.interpolate("step-after")
                 .x(function(d) { return x(d.recall); })
-                .y(function(d) { return y(d.percision); });
+                .y(function(d) { return y(d.precision); });
 
         var svg = d3.select("#"+htmlElement)
                 .attr("width", width)
@@ -71,7 +71,7 @@
                 return {
                     name: name,
                     values: data.map(function(d) {
-                        return {recall: d.recall, percision: +d[name]};
+                        return {recall: d.recall, precision: +d[name]};
                     })
                 };
             });
@@ -82,8 +82,8 @@
             ]);
 
             y.domain([
-                d3.min(algs, function(c) { return d3.min(c.values, function(v) { return v.percision; }); }),
-                d3.max(algs, function(c) { return d3.max(c.values, function(v) { return v.percision; }); })
+                d3.min(algs, function(c) { return d3.min(c.values, function(v) { return v.precision; }); }),
+                d3.max(algs, function(c) { return d3.max(c.values, function(v) { return v.precision; }); })
             ]);
 
             svg.append("g")
@@ -104,7 +104,7 @@
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("Percision");
+                    .text("Precision");
 
             var alg = svg.selectAll(".alg")
                     .data(algs)
@@ -118,21 +118,21 @@
 
             alg.append("text")
                     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-                    .attr("transform", function(d) { return "translate(" + x(d.value.recall) + "," + y(d.value.percision) + ")"; })
+                    .attr("transform", function(d) { return "translate(" + x(d.value.recall) + "," + y(d.value.precision) + ")"; })
                     .attr("x", 3)
                     .attr("dy", ".35em");
         });
 
     };
 
-    makeLinesPlot("first-bm25", "./first_BM25.csv", 900, 500, 50, 100);
-    makeLinesPlot("first-vsm", "./first_VSM.csv", 900, 500, 50, 100);
+    makeLinesPlot("first-bm25", "./first_BM25.csv", 500, 300, 50, 100);
+    makeLinesPlot("first-vsm", "./first_VSM.csv", 500, 300, 50, 100);
 
-    makeLinesPlot("second-bm25", "./second_BM25.csv", 900, 500, 50, 100);
-    makeLinesPlot("second-vsm", "./second_VSM.csv", 900, 500, 50, 100);
+    makeLinesPlot("second-bm25", "./second_BM25.csv", 500, 300, 50, 100);
+    makeLinesPlot("second-vsm", "./second_VSM.csv", 500, 300, 50, 100);
 
-    makeLinesPlot("third-bm25", "./third_BM25.csv", 900, 500, 50, 100);
-    makeLinesPlot("third-vsm", "./third_VSM.csv", 900, 500, 50, 100);
+    makeLinesPlot("third-bm25", "./third_BM25.csv", 500, 300, 50, 100);
+    makeLinesPlot("third-vsm", "./third_VSM.csv", 500, 300, 50, 100);
 </script>
 </body>
 </html>
